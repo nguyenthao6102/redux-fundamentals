@@ -10,7 +10,7 @@ import { Provider } from 'react-redux'
 
 import { fetchTodos } from './features/todos/todosSlice'
 
-store.dispatch(fetchTodos)
+store.dispatch(fetchTodos())
 
 ReactDOM.render(
   // Render a `<Provider>` around the entire `<App>`,

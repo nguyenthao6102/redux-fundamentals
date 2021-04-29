@@ -1,10 +1,10 @@
 import { client } from '../../api/client'
 const initialState = []
 
-function nextTodoId(todos) {
-  const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
-  return maxId + 1
-}
+// function nextTodoId(todos) {
+//   const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
+//   return maxId + 1
+// }
 
 export default function todosReducer(state = initialState, action) {
   switch (action.type) {
@@ -56,25 +56,27 @@ export default function todosReducer(state = initialState, action) {
       return state
   }
 }
+// Action creators
+export const todosLoaded = (todos) => {
+  return {
+    type: 'todos/todosLoaded',
+    payload: todos,
+  }
+}
+export const todoAdded = (todo) => ({ type: 'todos/todoAdded', payload: todo })
 // Thunk function
-export async function fetchTodos(dispatch, getState) {
+export const fetchTodos = () => async (dispatch) => {
   const response = await client.get('/fakeApi/todos')
-  const stateBefore = getState()
-  console.log('Todos before dispatch: ', stateBefore.todos.length)
-
-  dispatch({ type: 'todos/todosLoaded', payload: response.todos })
-
-  const stateAfter = getState()
-  console.log('Todos after dispatch: ', stateAfter.todos.length)
+  dispatch(todosLoaded(response.todos))
 }
 
 // Write a synchronous outer function that receives the `text` parameter:
 export function saveNewTodo(text) {
   // And then creates and returns the async thunk function:
   return async function saveNewTodoThunk(dispatch, getState) {
-    // ✅ Now we can use the text value and send it to the server
+    // Now we can use the text value and send it to the server
     const initialTodo = { text }
     const response = await client.post('/fakeApi/todos', { todo: initialTodo })
-    dispatch({ type: 'todos/todoAdded', payload: response.todo })
+    dispatch(todoAdded(response.todo))
   }
 }
